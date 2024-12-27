@@ -4,7 +4,7 @@ from tkinter import ttk
 class HomeView(ttk.Frame):
     def __init__(self, root):
         # Add an outer padding
-        super().__init__(root, padding=15)
+        super().__init__(root)
 
         self.create_styles()
         self.configure(style = 'Main.TFrame')
@@ -22,8 +22,8 @@ class HomeView(ttk.Frame):
         # Set style for main frame
         self.style.configure('Main.TFrame', background='#3E4248')
 
-        # Set style for header
-        self.style.configure('Header.TFrame')
+        # Set centered content
+        self.style.configure('Center.TFrame', background='#3E4248')
 
         self.style.configure(
                 'Header.TLabel',
@@ -53,30 +53,32 @@ class HomeView(ttk.Frame):
 
     def generate_home_widgets(self):
 
+        center_content = ttk.Frame(
+                self,
+                style='Center.TFrame'
+                )
+        center_content.place(width=200, height=300, relx=.5, rely=.5, anchor=tk.CENTER)
+
         # HEADER
         header_container = ttk.Frame(
-                self,
-                padding=2,
-                style='Header.TFrame'
-                )
+                center_content,
+                padding=2,)
         header_container.pack()
 
         header = ttk.Label(
                 header_container,
                 text='NetMan',
                 style='Header.TLabel',
-                anchor=tk.CENTER,
+                anchor=tk.CENTER
                 )
         header.pack(ipadx='10', ipady='5')
 
         # CONTENT
-
         content_container = ttk.Frame(
-                self,
-                padding=10,
-                )
+                center_content,
+                padding=10)
 
-        content_container.place(width=200, height=170, relx=0.5, rely=0.5, anchor=tk.CENTER)
+        content_container.place(width=200, height=170, relx=0.5, rely=0.6, anchor=tk.CENTER)
 
         # CURRENTLY AVAILABLE FUNCTIONS
         functions = ('Chat', 'TBD', 'TBD', 'TBD')
