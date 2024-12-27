@@ -9,7 +9,7 @@ class MainApp(tk.Tk):
         super().__init__()
 
         # Init root frame
-        self.title('Netscope')
+        self.title('NetMan')
         self.resizable(True, True)
 
         # Create and pack main frame (psuedo root frame)
