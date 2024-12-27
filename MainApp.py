@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 
 from HomeView import HomeView
-from HomeController import HomeController
+from ChatView import ChatView
+from FrameController import FrameController
 
 class MainApp(tk.Tk):
     def __init__(self):
@@ -10,21 +11,29 @@ class MainApp(tk.Tk):
 
         # Init root frame
         self.title('NetMan')
+        self.geometry('300x400')
         self.resizable(True, True)
 
-        # Create and pack main frame (psuedo root frame)
-        view = HomeView(self)
-        view.pack(fill='both', expand=True)
+        # Create frames
+        self.frames = {
+                'home': HomeView(self),
+                'chat': ChatView(self)
+                }
+        self.init_frames()
 
-        # Create controller
-        controller = HomeController()
+        # Set home frame
+        self.switch_frame('home')
 
-        #Set the controller of the main view to the main controller
-        view.set_controller(controller)
+    def init_frames(self):
+        for frame in self.frames.values():
+            frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+    def switch_frame(self, frame_name):
+        self.frames[frame_name].tkraise()
 
 
 if (__name__ == '__main__'):
-    # Create the root frame and initilize the tkinter application
+    # Create the root frame and initialize the tkinter application
     app = MainApp()
     app.mainloop()
 

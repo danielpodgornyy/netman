@@ -3,16 +3,16 @@ from tkinter import ttk
 
 class HomeView(ttk.Frame):
     def __init__(self, root):
-        # Add an outer padding
         super().__init__(root)
 
+        # Keep a reference to the parent for switching frames
+        self.parent = root
+
+        # Set styles
         self.create_styles()
         self.configure(style = 'Main.TFrame')
-        self.generate_home_widgets()
 
-
-    def set_controller(self, controller):
-        self.controller = controller
+        self.generate_widgets()
 
     def create_styles(self):
         self.style = ttk.Style()
@@ -33,6 +33,10 @@ class HomeView(ttk.Frame):
 
         self.style.configure('Content.TFrame', background='#2B2E32')
 
+        #self.style.layout(
+        #        'Content.TButton',
+        #        [('Button.background', None), ('Button.label', {'sticky': 'nswe'})])
+
         self.style.configure(
                 'Content.TButton',
                 background='#2B2E32',
@@ -47,11 +51,12 @@ class HomeView(ttk.Frame):
         button = ttk.Button(
                 container,
                 text=name,
-                style='Content.TButton'
+                style='Content.TButton',
+                command=lambda: self.parent.switch_frame(name.lower()) # When the button is clicked, the parent deletes the view and replaces it
                 )
         button.grid(column=0, row=row, sticky='nesw')
 
-    def generate_home_widgets(self):
+    def generate_widgets(self):
 
         center_content = ttk.Frame(
                 self,
