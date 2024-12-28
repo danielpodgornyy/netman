@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter.scrolledtext import ScrolledText
 from tkinter import ttk
 
 class ChatView(ttk.Frame):
@@ -83,20 +84,6 @@ class ChatView(ttk.Frame):
                 anchor=tk.CENTER)
         name.pack(fill=tk.X)
 
-    def create_bubble(self, parent, message_num, message, recieved=False):
-        if (recieved):
-            sticky_pos = 'nw'
-        else:
-            sticky_pos = 'ne'
-
-        parent.rowconfigure(message_num)
-        bubble = ttk.Label(
-                parent,
-                style='Bubble.TLabel',
-                text=message,
-                anchor=tk.CENTER)
-        bubble.grid(column=0, row=message_num, pady=2, sticky=sticky_pos)
-
     def generate_left_content(self, left_container):
 
         chats = ttk.Frame(left_container)
@@ -114,22 +101,16 @@ class ChatView(ttk.Frame):
         right_container.columnconfigure(0, weight=1)
         right_container.columnconfigure(1, weight=0)
 
-        # The chat bubble container is layered twice to have the grid stick to the bottom, while also allowing it to insert new entries from the bottom
-        chat_container = ttk.Frame(
+        chat_response = ScrolledText(
                 right_container,
-                style='DarkGrey.TFrame'
+                background='#2B2E32',
+                foreground='white',
+                highlightcolor='white'
                 )
-        chat_container.grid(column=0, row=0, columnspan=2, sticky='nsew')
+        chat_response['state'] = 'disabled'
+        chat_response.grid(column=0, row=0, columnspan=2, sticky='nsew')
+        chat_response.insert('1.0', 'This is a Text widget demo')
 
-        chat_bubble_container = ttk.Frame(
-                chat_container,
-                style='DarkGrey.TFrame',
-                padding=10)
-        chat_bubble_container.pack(side='bottom', fill=tk.X)
-
-        chat_bubble_container.columnconfigure(0, weight=1)
-        self.create_bubble(chat_bubble_container, 0, 'Yo', False)
-        self.create_bubble(chat_bubble_container, 1, 'Bro', True)
 
         chat_entry = ttk.Entry(
                 right_container
