@@ -29,7 +29,7 @@ class MainApp(tk.Tk):
             frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
     def switch_frame(self, frame_name):
-        self.frames[frame_name].tkraise()
+        self.frames[frame_name.lower()].tkraise()
 
 
 if (__name__ == '__main__'):

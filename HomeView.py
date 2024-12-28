@@ -52,7 +52,7 @@ class HomeView(ttk.Frame):
                 container,
                 text=name,
                 style='Content.TButton',
-                command=lambda: self.parent.switch_frame(name.lower()) # When the button is clicked, the parent deletes the view and replaces it
+                command=lambda: self.parent.switch_frame(name) # When the button is clicked, the parent deletes the view and replaces it
                 )
         button.grid(column=0, row=row, sticky='nesw')
 
