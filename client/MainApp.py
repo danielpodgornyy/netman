@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 
-from HomeView import HomeView
-from ChatView import ChatView
-from FrameController import FrameController
+from views.HomeView import HomeView
+from views.ChatView import ChatView
+from controllers.ChatController import ChatController
 
 class MainApp(tk.Tk):
     def __init__(self):
@@ -19,6 +19,13 @@ class MainApp(tk.Tk):
                 'home': HomeView(self),
                 'chat': ChatView(self)
                 }
+
+        # Connect controllers
+        # CHAT
+        chat_controller = ChatController()
+        self.frames['chat'].set_controller(chat_controller)
+
+        # Initialize frames
         self.init_frames()
 
         # Set home frame
