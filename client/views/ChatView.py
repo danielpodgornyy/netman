@@ -36,7 +36,7 @@ class ChatView(ttk.Frame):
         self.style.configure('Profile.TLabel', font=('MathJax_SansSerif', 20), padding=0, background='#3E4248', foreground='white')
         self.style.configure('Send.TButton', font=('MathJax_SansSerif', 10), padding=0)
 
-        self.style.configure('Bubble.TLabel', font=('MathJax_SansSerif', 15), padding=4 )
+        self.style.configure('Prompt.TLabel', font=('MathJax_SansSerif', 10), padding=0 )
 
     def create_menu(self, frame):
             # PROGRAMS
@@ -82,7 +82,7 @@ class ChatView(ttk.Frame):
             chat_menu['menu'] = chat
 
             # Add chat option
-            chat.add_command(label="Connect to Server")
+            chat.add_command(label="Connect to Server", command=lambda: self.connect_to_server())
 
     def create_chat(self, parent, chat_num, name):
         parent.rowconfigure(chat_num, weight=1)
@@ -94,7 +94,8 @@ class ChatView(ttk.Frame):
                 text=name,
                 padding = (0, 10),
                 style='Profile.TLabel',
-                anchor=tk.CENTER)
+                anchor=tk.CENTER
+                )
         name.pack(fill=tk.X)
 
     def add_text(self, textbox, text):
@@ -103,7 +104,6 @@ class ChatView(ttk.Frame):
         textbox.config(state=tk.DISABLED)
 
     def generate_left_content(self, left_container):
-
         chat = ttk.Frame(left_container)
         chat.pack(side='top', fill=tk.X)
 
@@ -151,14 +151,51 @@ class ChatView(ttk.Frame):
         # MAIN CONTAINERS
         left_container = ttk.Frame(
                 self,
-                style='LightGrey.TFrame')
+                style='LightGrey.TFrame'
+                )
         left_container.grid(column=0, row=1, sticky='nsew')
 
         right_container = ttk.Frame(
                 self,
-                style='DarkGrey.TFrame')
+                style='DarkGrey.TFrame'
+                )
         right_container.grid(column=1, row=1, sticky='nsew')
 
         self.generate_left_content(left_container)
         self.generate_right_content(right_container)
+
+    def connect_to_server(self):
+        # Create prompt for IP address
+        prompt_window = PromptView(self.parent)
+        prompt_window.grab_set()
+
+        prompt_container = ttk.Frame(
+                prompt_window,
+                padding=10
+                )
+        prompt_container.pack(expand=True, fill=tk.BOTH)
+
+        prompt_container.rowconfigure(0, weight=1)
+        prompt_container.columnconfigure(0, weight=1)
+        prompt_container.columnconfigure(1, weight=2)
+
+        prompt = ttk.Label(
+                prompt_container,
+                text='Enter valid server IP address:',
+                style='Prompt.TLabel'
+                )
+        prompt.grid(column=0, row=0, sticky='nesw')
+
+        textbox = ttk.Entry(
+               prompt_container
+                )
+        textbox.grid(column=1, row=0, sticky='ew')
+
+class PromptView(tk.Toplevel):
+    def __init__(self, root):
+        super().__init__(root)
+
+        self.title('Enter IP Address')
+        self.geometry('400x100')
+        self.resizable(False, False)
 
