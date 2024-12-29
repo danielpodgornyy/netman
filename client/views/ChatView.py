@@ -1,8 +1,13 @@
 import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 from tkinter import ttk
+from tkinter.messagebox import showerror
+
+from utils.Status import Status
+
 
 class ChatView(ttk.Frame):
+
     def __init__(self, root):
         super().__init__(root)
 
@@ -82,7 +87,7 @@ class ChatView(ttk.Frame):
             chat_menu['menu'] = chat
 
             # Add chat option
-            chat.add_command(label="Connect to Server", command=lambda: self.connect_to_server())
+            chat.add_command(label="Connect to Server", command=lambda: self.prompt_connect_to_server())
 
     def create_chat(self, parent, chat_num, name):
         parent.rowconfigure(chat_num, weight=1)
@@ -164,9 +169,9 @@ class ChatView(ttk.Frame):
         self.generate_left_content(left_container)
         self.generate_right_content(right_container)
 
-    def connect_to_server(self):
+    def prompt_connect_to_server(self):
         # Create prompt for IP address
-        prompt_window = PromptView(self.parent)
+        prompt_window = PromptView(self.parent, 'Enter IP Address')
         prompt_window.grab_set()
 
         prompt_container = ttk.Frame(
@@ -186,16 +191,40 @@ class ChatView(ttk.Frame):
                 )
         prompt.grid(column=0, row=0, sticky='nesw')
 
+        result = tk.StringVar()
         textbox = ttk.Entry(
-               prompt_container
+               prompt_container,
+               textvariable = result
                 )
         textbox.grid(column=1, row=0, sticky='ew')
 
+        # Allows me to both destroy the window and call the controller method on the same line
+        textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_connection(result.get())))
+
+    def try_connection(self, ip_address):
+        # Try to connect to the server, routing through the controller
+        connection_successful = self.controller.connect_to_server(ip_address)
+
+        if (connection_successful == Status.SUCCESS):
+            # Pull data from the server and populate page appropriately
+            pass
+        elif (connection_successful == Status.SYNTAX_ERROR):
+            showerror(
+                    title='Syntax Error',
+                    message='Syntax is invalid'
+                    )
+        else: #1
+            showerror(
+                    title='Connection Failed',
+                    message='Error, connection couldn\'t be made'
+                    )
+
 class PromptView(tk.Toplevel):
-    def __init__(self, root):
+    def __init__(self, root, title):
         super().__init__(root)
 
-        self.title('Enter IP Address')
-        self.geometry('400x100')
+
+        self.title(title)
+        self.geometry('400x50')
         self.resizable(False, False)
 

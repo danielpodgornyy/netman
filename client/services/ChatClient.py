@@ -5,13 +5,13 @@ class ChatClient():
     def __init__(self):
         self.host = '***REMOVED***'
         self.port = 3510
-    def connect_to_server(self):
+    def connect_to_server(self, ip_address):
         self.client = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
 
         try:
             self.client.connect((self.host, self.port))
-        except:
-            print('Could not connect to server')
+        except Exception as e:
+            raise e
 
 
 if __name__ == '__main__':
