@@ -1,13 +1,14 @@
 import tkinter as tk
-from tkinter.scrolledtext import ScrolledText
 from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 from tkinter.messagebox import showerror
 
 from utils.Status import Status
+from views.utils.VerticalScrolledFrame import VerticalScrolledFrame
+from views.utils.PromptWindow import PromptWindow
 
 
 class ChatView(ttk.Frame):
-
     def __init__(self, root):
         super().__init__(root)
 
@@ -91,7 +92,7 @@ class ChatView(ttk.Frame):
 
     def create_chat(self, parent, chat_num, name):
         parent.rowconfigure(chat_num, weight=1)
-        chat_profile = tk.Frame(parent, background='white')
+        chat_profile = tk.Frame(parent.interior, background='white')
         chat_profile.grid(column=0, row=chat_num, padx=1, pady=1, sticky='new')
 
         name = ttk.Label(
@@ -109,13 +110,22 @@ class ChatView(ttk.Frame):
         textbox.config(state=tk.DISABLED)
 
     def generate_left_content(self, left_container):
-        chat = ttk.Frame(left_container)
-        chat.pack(side='top', fill=tk.X)
+        # USE INTERIOR TO REFERENCE THE FRAME
+        chat = VerticalScrolledFrame(left_container)
+        chat.pack(side='top', fill=tk.BOTH, expand=True)
+
+        # set frame background
+        chat.canvas.config(background='#3E4248')
+
 
         # Configure the left container to contain the chatlist
-        chat.columnconfigure(0, weight=1)
+        chat.interior.columnconfigure(0, weight=1)
+        chat.interior.rowconfigure(0, weight=1)
+
+
         self.create_chat(chat, 0, 'id')
         self.create_chat(chat, 1, 'Billy')
+        self.create_chat(chat, 2, 'Billy')
 
     def generate_right_content(self, right_container):
         # Configure the right container to contain chat functionality
@@ -171,7 +181,7 @@ class ChatView(ttk.Frame):
 
     def prompt_connect_to_server(self):
         # Create prompt for IP address
-        prompt_window = PromptView(self.parent, 'Enter IP Address')
+        prompt_window = PromptWindow(self.parent, 'Enter IP Address')
         prompt_window.grab_set()
 
         prompt_container = ttk.Frame(
@@ -218,13 +228,3 @@ class ChatView(ttk.Frame):
                     title='Connection Failed',
                     message='Error, connection couldn\'t be made'
                     )
-
-class PromptView(tk.Toplevel):
-    def __init__(self, root, title):
-        super().__init__(root)
-
-
-        self.title(title)
-        self.geometry('400x50')
-        self.resizable(False, False)
-

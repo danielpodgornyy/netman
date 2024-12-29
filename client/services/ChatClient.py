@@ -3,7 +3,7 @@ import threading
 
 class ChatClient():
     def __init__(self):
-        self.host = '***REMOVED***'
+        self.host = '192.168.1.54'
         self.port = 3510
     def connect_to_server(self, ip_address):
         self.client = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
