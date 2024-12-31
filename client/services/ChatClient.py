@@ -1,20 +1,21 @@
+import os
+from dotenv import load_dotenv, dotenv_values
 import socket as sock
 import threading
 
+load_dotenv()
+
 class ChatClient():
     def __init__(self):
-        self.host = '192.168.1.54'
-        self.port = 3510
+        self.port = int(os.getenv('PORT'))
+
     def connect_to_server(self, ip_address):
         self.client = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
 
         try:
-            self.client.connect((self.host, self.port))
+            self.client.connect((ip_address, self.port))
         except Exception as e:
             raise e
 
-
-if __name__ == '__main__':
-    client = ChatClient()
-    client.connect_to_server()
-
+    def get_open_chats():
+        pass

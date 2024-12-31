@@ -217,13 +217,15 @@ class ChatView(ttk.Frame):
 
         if (connection_successful == Status.SUCCESS):
             # Pull data from the server and populate page appropriately
+            chatlist = self.controller.get_open_chats()
+
             pass
         elif (connection_successful == Status.SYNTAX_ERROR):
             showerror(
                     title='Syntax Error',
                     message='Syntax is invalid'
                     )
-        else: #1
+        else: # 0
             showerror(
                     title='Connection Failed',
                     message='Error, connection couldn\'t be made'
