@@ -1,4 +1,5 @@
 import re
+import json
 
 from services.ChatClient import ChatClient
 from utils.Status import Status
@@ -24,7 +25,7 @@ class ChatController():
 
         return Status.SUCCESS
 
-    def get_open_chats():
+    def get_open_chats(self):
         # Test this
         try:
             chats = self.client.get_open_chats()
@@ -34,5 +35,26 @@ class ChatController():
             chats = None
 
         return chats
+
+    def send_username(self, username):
+        # Turn the object to a JSON string
+        json_data = json.dumps({ 'username': username })
+        json_data_size = len(json_data.encode())
+        http_request_data = {
+                'method': 'POST',
+                'path': '/username',
+                'headers': {
+                    'Content-Type': 'application/jason',
+                    'Content-Length': json_data_size,
+                    'Connection': 'close'
+                    },
+                'body': json_data
+                }
+
+
+        response_code = self.client.send_http_request(http_request_data)
+
+        return response_code
+
 
 

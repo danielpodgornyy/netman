@@ -6,7 +6,6 @@ class HTTPRequestHandler():
         self.res_stream = res_stream
         self.method = ''
         self.path = ''
-        self.protocol = ''
         self.headers =  {
                 'Content-Type': 'application/json',
                 'Content-Length': '0',
@@ -18,7 +17,8 @@ class HTTPRequestHandler():
         self.HTTPStatus = {
                 200: 'OK',
                 400: 'Bad Request',
-                404: 'Not found'
+                404: 'Not found',
+                409: 'Conflict'
                 }
 
         self.controller = controller
@@ -28,6 +28,8 @@ class HTTPRequestHandler():
     def handler(self):
         self.parse_stream()
 
+        # Use the correct handler based on the method
+        # Write the appropriate response messages in the method handlers
         valid_methods = ('GET', 'HEAD', 'POST')
         if self.method in valid_methods:
             method_handler = getattr(self, f"handle_{self.method}")
@@ -36,6 +38,11 @@ class HTTPRequestHandler():
             # An invalid request was recieved
             self.write_response_line(400)
             self.write_response_headers()
+
+        # Send the response to the client
+        self.res_stream.flush()
+
+    # Stream parser
 
     def parse_stream(self):
         # Parse request line
@@ -54,13 +61,17 @@ class HTTPRequestHandler():
         # Retrieve the rest as the body
         self.body = self.req_stream.readline().decode().strip(' \r\n')
 
+
+    # Method handlers
+
     def handle_GET(self):
         match self.path:
             case '/':
                 pass
             case _:
                 self.write_response_line(404)
-                self.write_response_headers()
+
+        self.write_response_headers()
 
     def handle_POST(self):
         match self.path:
@@ -68,24 +79,34 @@ class HTTPRequestHandler():
                 # Pull the username from the json
                 username = json.loads(self.body)['username']
 
-                self.controller.input_username(username)
+                # Try to input username
+                if self.controller.input_username(username):
+                    # OK
+                    self.write_response_line(200)
+                else:
+                    # CONFLICT
+                    self.write_response_line(409)
             case _:
+                # NOT FOUND
                 self.write_response_line(404)
-                self.write_response_headers()
+
+        self.write_response_headers()
 
     def handle_HEAD(self):
         match self.path:
             case '/username':
-                pass
                 # pull username from db
+                pass
             case _:
                 self.write_response_line(404)
-                self.write_response_headers()
+
+        self.write_response_headers()
+
+    # Writing the the stream
 
     def write_response_line(self, status_code):
         response_line = f'HTTP/1.1 {status_code} {self.HTTPStatus[status_code]}\r\n'
         self.res_stream.write(response_line.encode())
-
         print(response_line)
 
     def write_response_headers(self, *args, **kwargs):
@@ -97,10 +118,11 @@ class HTTPRequestHandler():
         response_line = '\r\n'.join(f'{key}: {value}' for key, value in headers_copy.items())
         self.res_stream.write(response_line.encode())
 
+        print(response_line)
         # Empty line to define end of headers
         self.res_stream.write(b'\r\n\r\n')
 
-        print(response_line)
 
-
-
+    # Made for uniformity
+    def write_response_body(self, body):
+        self.res_stream.write(body.encode())

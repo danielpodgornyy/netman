@@ -3,6 +3,7 @@ import threading
 
 from utils.HTTPRequestHandler import HTTPRequestHandler
 from controllers.ChatController import ChatController
+from models.ChatModel import ChatModel
 
 class ChatServer():
     def __init__(self, sock_addr, req_handler):
@@ -10,15 +11,16 @@ class ChatServer():
         self.req_handler = req_handler
         self.listener_limit = 5
 
+        self.controller = ChatController()
+
     def listen_for_client(self, client):
         with client:
             # File objects that hold data to be written to or from (works similarly to python file handling)
             req_stream = client.makefile('rb')
             res_stream = client.makefile('wb')
-            controller = ChatController()
 
-            HTTPRequestHandler(req_stream, res_stream, controller)
-            # Wait for a username, if a nonvalid one is provided, end the connection
+            with req_stream, res_stream:
+                HTTPRequestHandler(req_stream, res_stream, self.controller)
 
     def accept_username(self, client):
         return

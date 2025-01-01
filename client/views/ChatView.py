@@ -179,23 +179,15 @@ class ChatView(ttk.Frame):
         self.generate_left_content(left_container)
         self.generate_right_content(right_container)
 
+    # DYNAMIC PROMPTS AND CHANGES
+
     def prompt_connect_to_server(self):
         # Create prompt for IP address
         prompt_window = PromptWindow(self.parent, 'Enter IP Address')
         prompt_window.grab_set()
 
-        prompt_container = ttk.Frame(
-                prompt_window,
-                padding=10
-                )
-        prompt_container.pack(expand=True, fill=tk.BOTH)
-
-        prompt_container.rowconfigure(0, weight=1)
-        prompt_container.columnconfigure(0, weight=1)
-        prompt_container.columnconfigure(1, weight=2)
-
         prompt = ttk.Label(
-                prompt_container,
+                prompt_window.prompt_container,
                 text='Enter valid server IP address:',
                 style='Prompt.TLabel'
                 )
@@ -203,7 +195,7 @@ class ChatView(ttk.Frame):
 
         result = tk.StringVar()
         textbox = ttk.Entry(
-               prompt_container,
+               prompt_window.prompt_container,
                textvariable = result
                 )
         textbox.grid(column=1, row=0, sticky='ew')
@@ -216,10 +208,11 @@ class ChatView(ttk.Frame):
         connection_successful = self.controller.connect_to_server(ip_address)
 
         if (connection_successful == Status.SUCCESS):
-            # Pull data from the server and populate page appropriately
-            chatlist = self.controller.get_open_chats()
+            # Prompt for a username
+            self.prompt_username()
 
-            pass
+            # Pull data from the server and populate page appropriately
+            # chatlist = self.controller.get_open_chats()
         elif (connection_successful == Status.SYNTAX_ERROR):
             showerror(
                     title='Syntax Error',
@@ -230,3 +223,45 @@ class ChatView(ttk.Frame):
                     title='Connection Failed',
                     message='Error, connection couldn\'t be made'
                     )
+
+    def prompt_username(self):
+        # Create prompt for username
+        prompt_window = PromptWindow(self.parent, 'Enter username')
+        prompt_window.grab_set()
+
+        prompt = ttk.Label(
+                prompt_window.prompt_container,
+                text='Enter username:',
+                style='Prompt.TLabel'
+                )
+        prompt.grid(column=0, row=0, sticky='nesw')
+
+        result = tk.StringVar()
+        textbox = ttk.Entry(
+               prompt_window.prompt_container,
+               textvariable = result
+                )
+        textbox.grid(column=1, row=0, sticky='ew')
+
+        textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_send_username(result.get())))
+
+    def try_send_username(self, username):
+        response_code = int(self.controller.send_username(username))
+
+        # SUCCESS
+        if response_code == 200:
+            self.populate_window()
+        elif response_code == 409:
+            showerror(
+                    title='Conflict Error',
+                    message='Username already exists on this server'
+                    )
+        else:
+            showerror(
+                    title='Error',
+                    message='An error has occured'
+                    )
+
+    def populate_window(self):
+        pass
+
