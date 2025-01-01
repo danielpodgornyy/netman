@@ -116,7 +116,7 @@ class HTTPRequestHandler():
                 # Pull the username from the json
                 username = json.loads(self.body)['username']
 
-                # Try to delete username
+                # Delete username
                 self.controller.delete_username(username)
                 self.write_response_line(200)
             case _:

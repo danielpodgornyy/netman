@@ -77,7 +77,7 @@ class ChatView(ttk.Frame):
             chat_menu['menu'] = chat
 
             # Add chat option
-            chat.add_command(label="Add Chat")
+            chat.add_command(label="Add Chat", command=lambda: self.prompt_add_chat)
 
             # SERVER
             chat_menu = ttk.Menubutton(
@@ -186,26 +186,15 @@ class ChatView(ttk.Frame):
     # DYNAMIC PROMPTS AND CHANGES
 
     def prompt_connect_to_server(self):
+        # Result string
+        result = tk.StringVar()
+
         # Create prompt for IP address
-        prompt_window = PromptWindow(self.parent, 'Enter IP Address')
+        prompt_window = PromptWindow(self.parent, 'Enter valid IP Address', result)
         prompt_window.grab_set()
 
-        prompt = ttk.Label(
-                prompt_window.prompt_container,
-                text='Enter valid server IP address:',
-                style='Prompt.TLabel'
-                )
-        prompt.grid(column=0, row=0, sticky='nesw')
-
-        result = tk.StringVar()
-        textbox = ttk.Entry(
-               prompt_window.prompt_container,
-               textvariable = result
-                )
-        textbox.grid(column=1, row=0, sticky='ew')
-
         # Allows me to both destroy the window and call the controller method on the same line
-        textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_connection(result.get())))
+        prompt_window.textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_connection(result.get())))
 
     def try_connection(self, ip_address):
         # Try to connect to the server, routing through the controller
@@ -229,25 +218,14 @@ class ChatView(ttk.Frame):
                     )
 
     def prompt_username(self):
+        # Keep resultant string
+        result = tk.StringVar()
+
         # Create prompt for username
-        prompt_window = PromptWindow(self.parent, 'Enter username')
+        prompt_window = PromptWindow(self.parent, 'Enter username', result)
         prompt_window.grab_set()
 
-        prompt = ttk.Label(
-                prompt_window.prompt_container,
-                text='Enter username:',
-                style='Prompt.TLabel'
-                )
-        prompt.grid(column=0, row=0, sticky='nesw')
-
-        result = tk.StringVar()
-        textbox = ttk.Entry(
-               prompt_window.prompt_container,
-               textvariable = result
-                )
-        textbox.grid(column=1, row=0, sticky='ew')
-
-        textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_send_username(result.get())))
+        prompt_window.textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_send_username(result.get())))
 
     def try_send_username(self, username):
         response_code = int(self.controller.send_username(username))
@@ -280,6 +258,27 @@ class ChatView(ttk.Frame):
         # Update textbox
         self.clear_text(self.chat_response)
         self.add_text(self.chat_response, '--- SELECT A CHATROOM ---')
+
+    def prompt_add_chat(self):
+        # Create prompt for username
+        prompt_window = PromptWindow(self.parent, 'Enter username')
+        prompt_window.grab_set()
+
+        prompt = ttk.Label(
+                prompt_window.prompt_container,
+                text='Enter username:',
+                style='Prompt.TLabel'
+                )
+        prompt.grid(column=0, row=0, sticky='nesw')
+
+        result = tk.StringVar()
+        textbox = ttk.Entry(
+               prompt_window.prompt_container,
+               textvariable = result
+                )
+        textbox.grid(column=1, row=0, sticky='ew')
+
+        textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_send_username(result.get())))
 
 
 
