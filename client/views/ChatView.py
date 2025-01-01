@@ -27,8 +27,12 @@ class ChatView(ttk.Frame):
 
         self.generate_widgets()
 
+
     def set_controller(self, controller):
         self.controller = controller
+
+        # Once controller is set, if the window is deleted, leave the server
+        self.parent.protocol("WM_DELETE_WINDOW", lambda: (self.controller.leave_server(), self.parent.destroy()))
 
     def create_styles(self):
         self.style = ttk.Style()
@@ -109,6 +113,11 @@ class ChatView(ttk.Frame):
         textbox.insert(tk.END, '>: ' + text + '\n')
         textbox.config(state=tk.DISABLED)
 
+    def clear_text(self, textbox):
+        textbox.config(state=tk.NORMAL)
+        textbox.delete("1.0", tk.END)
+        textbox.config(state=tk.DISABLED)
+
     def generate_left_content(self, left_container):
         # USE INTERIOR TO REFERENCE THE FRAME
         self.chat_container = VerticalScrolledFrame(left_container)
@@ -129,14 +138,14 @@ class ChatView(ttk.Frame):
         right_container.columnconfigure(0, weight=1)
         right_container.columnconfigure(1, weight=0)
 
-        chat_response = ScrolledText(
+        self.chat_response = ScrolledText(
                 right_container,
                 background='#2B2E32',
                 foreground='white',
                 highlightcolor='white'
                 )
-        chat_response.grid(column=0, row=0, columnspan=2, sticky='nsew')
-        self.add_text(chat_response, '--- CONNECT TO A SERVER ---')
+        self.chat_response.grid(column=0, row=0, columnspan=2, sticky='nsew')
+        self.add_text(self.chat_response, '--- CONNECT TO A SERVER ---')
 
         chat_entry = ttk.Entry(
                 right_container
@@ -251,6 +260,11 @@ class ChatView(ttk.Frame):
                     title='Conflict Error',
                     message='Username already exists on this server'
                     )
+        elif response_code == 406:
+            showerror(
+                    title='Username Error',
+                    message='Username cannot be empty'
+                    )
         else:
             showerror(
                     title='Error',
@@ -258,9 +272,19 @@ class ChatView(ttk.Frame):
                     )
 
     def populate_window(self):
-        #page_data
+        # Update the current chat_list
         chat_list = self.controller.get_chats()
-
         for index, chat_name in enumerate(chat_list):
             self.create_chat(self.chat_container, index, chat_name)
+
+        # Update textbox
+        self.clear_text(self.chat_response)
+        self.add_text(self.chat_response, '--- SELECT A CHATROOM ---')
+
+
+
+
+
+
+
 

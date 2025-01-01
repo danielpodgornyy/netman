@@ -14,6 +14,12 @@ class ChatController():
         self.model.input_username(username)
         return True
 
+    def delete_username(self, username):
+        curr_users = self.model.get_curr_users()
+        if username in curr_users:
+            self.model.delete_username(username)
+
+
     def get_curr_chats(self):
         chat_list = self.model.get_curr_chats()
 

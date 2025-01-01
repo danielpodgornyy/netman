@@ -10,6 +10,9 @@ class ChatController():
         self.username = ''
 
     def init_connect_to_server(self, ip_address):
+        # If you were previously connected to a server, remove your username from it
+        if (self.username != ''):
+            self.leave_server()
 
         # Check for a valid pattern
         ip_pattern = r'(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}'
@@ -27,10 +30,46 @@ class ChatController():
             self._send_test_message()
 
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Error attempting connection: {e}")
             return Status.CONNECTION_FAILED
 
         return Status.SUCCESS
+
+    def leave_server(self):
+        print(self.username)
+        # If there is no username set, there is nothing to be done
+        if (self.username == ''):
+            return
+
+        # Convert username to json object
+        json_data = json.dumps({ 'username': self.username })
+        json_data_size = len(json_data.encode())
+
+        # When leaving the connection, delete the username from the server side
+        http_request_data = {
+                'method': 'DELETE',
+                'path': '/username',
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Content-Length': json_data_size,
+                    'Connection': 'close'
+                    },
+                'body': json_data
+                }
+
+        # Send a request to delete username
+        try:
+            self.client.connect_to_server()
+            self.client.send_http_request(http_request_data)
+        except:
+            print(f"Error deleting username: ", e)
+
+
+        # Reset username
+        self.username = ''
+        # Close connection
+        self.client.close_connection()
+
 
     def _send_test_message(self):
         http_request_data = {
@@ -47,6 +86,10 @@ class ChatController():
         response_code, body = self.client.send_http_request(http_request_data)
 
     def send_username(self, username):
+        # Username cannot be empty
+        if (username == ''):
+            return 406
+
         # Set the username
         self.username = username
 

@@ -15,6 +15,10 @@ class ChatModel():
         self.curr_users.append(username)
         print(self.curr_users)
 
+    def delete_username(self, username):
+        self.curr_users.remove(username)
+        print(self.curr_users)
+
     def get_curr_chats(self):
         return list(self.curr_chats.keys())
 

@@ -18,7 +18,8 @@ class HTTPRequestHandler():
                 200: 'OK',
                 400: 'Bad Request',
                 404: 'Not found',
-                409: 'Conflict'
+                409: 'Conflict',
+                500: 'Internal Server Error'
                 }
 
         self.controller = controller
@@ -30,7 +31,7 @@ class HTTPRequestHandler():
 
         # Use the correct handler based on the method
         # Write the appropriate response messages in the method handlers
-        valid_methods = ('GET', 'HEAD', 'POST')
+        valid_methods = ('GET', 'HEAD', 'POST', 'DELETE')
         if self.method in valid_methods:
             method_handler = getattr(self, f"handle_{self.method}")
             method_handler()
@@ -102,6 +103,21 @@ class HTTPRequestHandler():
     def handle_HEAD(self):
         match self.path:
             case '/':
+                self.write_response_line(200)
+            case _:
+                self.write_response_line(404)
+
+        self.write_response_headers()
+
+
+    def handle_DELETE(self):
+        match self.path:
+            case '/username':
+                # Pull the username from the json
+                username = json.loads(self.body)['username']
+
+                # Try to delete username
+                self.controller.delete_username(username)
                 self.write_response_line(200)
             case _:
                 self.write_response_line(404)

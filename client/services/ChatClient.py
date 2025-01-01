@@ -39,3 +39,7 @@ class ChatClient():
 
         # return the response code and body
         return req_handler.response_code, req_handler.body
+
+    # Allows controller to also close connection
+    def close_connection(self):
+        self.client.close()
