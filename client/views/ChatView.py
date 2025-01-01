@@ -271,6 +271,15 @@ class ChatView(ttk.Frame):
         prompt_window.textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_add_chat(result.get())))
 
     def try_add_chat(self, chat_room_name):
+        # Must be connected to a server
+        if (not self.controller.server_is_active()):
+             showerror(
+                title='Server Error',
+                message='Must be connected to a server'
+                )
+             return
+
+
         response_code = int(self.controller.add_chat(chat_room_name))
 
         # SUCCESS

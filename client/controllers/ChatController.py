@@ -173,3 +173,9 @@ class ChatController():
         print(response_code)
 
         return response_code
+
+    def server_is_active(self):
+        if self.username != '':
+            return True
+        else:
+            return False

@@ -43,3 +43,4 @@ class ChatClient():
     # Allows controller to also close connection
     def close_connection(self):
         self.client.close()
+        self.server_address = ''
