@@ -94,6 +94,18 @@ class HTTPRequestHandler():
                 else:
                     # CONFLICT
                     self.write_response_line(409)
+            case '/chat':
+                # Pull the username from the json
+                chat_room_name = json.loads(self.body)['chat_room_name']
+
+                # Try to input username
+                if self.controller.add_chat(chat_room_name):
+                    # OK
+                    self.write_response_line(200)
+                else:
+                    # CONFLICT
+                    self.write_response_line(409)
+
             case _:
                 # NOT FOUND
                 self.write_response_line(404)

@@ -22,3 +22,10 @@ class ChatModel():
     def get_curr_chats(self):
         return list(self.curr_chats.keys())
 
+    def add_chat(self, chat_room_name):
+        chat_room_data = ''
+
+        self.curr_chats[chat_room_name] = chat_room_data
+
+        print(self.curr_chats.keys())
+

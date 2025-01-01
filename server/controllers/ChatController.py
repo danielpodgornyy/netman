@@ -28,6 +28,15 @@ class ChatController():
                 }
         return chat_list_object
 
+    def add_chat(self, chat_room_name):
+        # Check if the chat room exists
+        curr_chats = self.model.get_curr_chats()
+        if chat_room_name in curr_chats:
+            return False
+
+        # Input username
+        self.model.add_chat(chat_room_name)
+        return True
 
 
 

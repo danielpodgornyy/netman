@@ -77,7 +77,7 @@ class ChatView(ttk.Frame):
             chat_menu['menu'] = chat
 
             # Add chat option
-            chat.add_command(label="Add Chat", command=lambda: self.prompt_add_chat)
+            chat.add_command(label="Add Chat", command=lambda: self.prompt_add_chat())
 
             # SERVER
             chat_menu = ttk.Menubutton(
@@ -254,36 +254,42 @@ class ChatView(ttk.Frame):
         chat_list = self.controller.get_chats()
         for index, chat_name in enumerate(chat_list):
             self.create_chat(self.chat_container, index, chat_name)
+            self.chat_index = index
 
         # Update textbox
         self.clear_text(self.chat_response)
         self.add_text(self.chat_response, '--- SELECT A CHATROOM ---')
 
     def prompt_add_chat(self):
-        # Create prompt for username
-        prompt_window = PromptWindow(self.parent, 'Enter username')
+        # Keep resultant string
+        result = tk.StringVar()
+
+        # Create prompt for chat room name
+        prompt_window = PromptWindow(self.parent, 'Enter chat room name:', result)
         prompt_window.grab_set()
 
-        prompt = ttk.Label(
-                prompt_window.prompt_container,
-                text='Enter username:',
-                style='Prompt.TLabel'
-                )
-        prompt.grid(column=0, row=0, sticky='nesw')
+        prompt_window.textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_add_chat(result.get())))
 
-        result = tk.StringVar()
-        textbox = ttk.Entry(
-               prompt_window.prompt_container,
-               textvariable = result
-                )
-        textbox.grid(column=1, row=0, sticky='ew')
+    def try_add_chat(self, chat_room_name):
+        response_code = int(self.controller.add_chat(chat_room_name))
 
-        textbox.bind('<Return>', lambda e: (prompt_window.destroy(), self.try_send_username(result.get())))
-
-
-
-
-
-
-
+        # SUCCESS
+        if response_code == 200:
+            self.chat_index += 1
+            self.create_chat(self.chat_container, self.chat_index, chat_room_name)
+        elif response_code == 409:
+            showerror(
+                    title='Conflict Error',
+                    message='Chat room already exists on this server'
+                    )
+        elif response_code == 406:
+            showerror(
+                    title='Chat Room Name Error',
+                    message='Chat room name cannot be empty'
+                    )
+        else:
+            showerror(
+                    title='Error',
+                    message='An error has occured'
+                    )
 
