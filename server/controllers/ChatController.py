@@ -14,3 +14,14 @@ class ChatController():
         self.model.input_username(username)
         return True
 
+    def get_curr_chats(self):
+        chat_list = self.model.get_curr_chats()
+
+        chat_list_object = {
+                'chat_list': chat_list
+                }
+        return chat_list_object
+
+
+
+

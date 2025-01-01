@@ -111,21 +111,16 @@ class ChatView(ttk.Frame):
 
     def generate_left_content(self, left_container):
         # USE INTERIOR TO REFERENCE THE FRAME
-        chat = VerticalScrolledFrame(left_container)
-        chat.pack(side='top', fill=tk.BOTH, expand=True)
+        self.chat_container = VerticalScrolledFrame(left_container)
+        self.chat_container.pack(side='top', fill=tk.BOTH, expand=True)
 
         # set frame background
-        chat.canvas.config(background='#3E4248')
+        self.chat_container.canvas.config(background='#3E4248')
 
 
         # Configure the left container to contain the chatlist
-        chat.interior.columnconfigure(0, weight=1)
-        chat.interior.rowconfigure(0, weight=1)
-
-
-        self.create_chat(chat, 0, 'id')
-        self.create_chat(chat, 1, 'Billy')
-        self.create_chat(chat, 2, 'Billy')
+        self.chat_container.interior.columnconfigure(0, weight=1)
+        self.chat_container.interior.rowconfigure(0, weight=1)
 
     def generate_right_content(self, right_container):
         # Configure the right container to contain chat functionality
@@ -263,4 +258,9 @@ class ChatView(ttk.Frame):
                     )
 
     def populate_window(self):
-        self.controller.get_chats()
+        #page_data
+        chat_list = self.controller.get_chats()
+
+        for index, chat_name in enumerate(chat_list):
+            self.create_chat(self.chat_container, index, chat_name)
+

@@ -45,10 +45,8 @@ class HTTPRequestHandler():
     def parse_stream(self):
         # Parse request line
         request_line = self.req_stream.readline().decode().strip(' \r\n')
-        print(request_line)
         self.method = request_line.split(' ')[0]
         self.path = request_line.split(' ')[1]
-        print(request_line, self.method, self.path)
 
         # Parse headers
         line = self.req_stream.readline().decode().strip(' \r\n')
@@ -65,12 +63,22 @@ class HTTPRequestHandler():
 
     def handle_GET(self):
         match self.path:
-            case '/':
-                pass
+            case '/chat':
+                chat_list = self.controller.get_curr_chats()
+
+                if chat_list:
+                    chat_list_json = json.dumps(chat_list)
+
+                    self.write_response_line(200)
+                    self.write_response_headers()
+                    self.write_response_body(chat_list_json)
+                else:
+                    self.write_response_line(404)
+                    self.write_response_headers()
             case _:
                 self.write_response_line(404)
+                self.write_response_headers()
 
-        self.write_response_headers()
 
     def handle_POST(self):
         match self.path:
@@ -93,9 +101,8 @@ class HTTPRequestHandler():
 
     def handle_HEAD(self):
         match self.path:
-            case '/username':
-                # pull username from db
-                pass
+            case '/':
+                self.write_response_line(200)
             case _:
                 self.write_response_line(404)
 
