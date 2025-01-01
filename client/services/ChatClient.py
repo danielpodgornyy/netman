@@ -11,8 +11,12 @@ class ChatClient():
     def __init__(self):
         self.port = int(os.getenv('PORT'))
         self.client = None
+        self.server_address = ''
 
-    def connect_to_server(self, ip_address):
+    def set_server_address(self, ip_address):
+        self.server_address = ip_address
+
+    def connect_to_server(self):
         if self.client is not None:
             self.client.close()
 
@@ -20,15 +24,10 @@ class ChatClient():
         self.client.settimeout(5) # Stop trying after 5 seconds
 
         try:
-            self.client.connect((ip_address, self.port))
+            self.client.connect((self.server_address, self.port))
         except Exception as e:
             raise e
 
-    def get_open_chats(self):
-        pass
-
-    def send_message(self, message):
-        self.client.sendall(message)
 
     def send_http_request(self, http_request_data):
         req_stream = self.client.makefile('wb')
@@ -38,4 +37,5 @@ class ChatClient():
             # We write the request and recieve the response (other way around on server side)
             req_handler = HTTPRequestSender(req_stream, res_stream, http_request_data)
 
-        return req_handler.response_code
+        # return the response code and body
+        return req_handler.response_code, req_handler.body

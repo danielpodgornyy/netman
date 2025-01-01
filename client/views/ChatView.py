@@ -205,7 +205,7 @@ class ChatView(ttk.Frame):
 
     def try_connection(self, ip_address):
         # Try to connect to the server, routing through the controller
-        connection_successful = self.controller.connect_to_server(ip_address)
+        connection_successful = self.controller.init_connect_to_server(ip_address)
 
         if (connection_successful == Status.SUCCESS):
             # Prompt for a username
@@ -263,5 +263,4 @@ class ChatView(ttk.Frame):
                     )
 
     def populate_window(self):
-        pass
-
+        self.controller.get_chats()

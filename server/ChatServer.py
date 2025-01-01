@@ -22,15 +22,6 @@ class ChatServer():
             with req_stream, res_stream:
                 HTTPRequestHandler(req_stream, res_stream, self.controller)
 
-    def accept_username(self, client):
-        return
-        with client:
-            while(True):
-                data = client.recv(2048)
-                if not data:
-                   client.sendall("Username is required")
-                # Wait for a username, if a nonvalid one is provided, end the connection
-
     def start_server(self):
         # Create a socket to accept clients on
         self.server = sock.socket(sock.AF_INET, sock.SOCK_STREAM)

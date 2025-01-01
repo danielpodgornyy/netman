@@ -40,13 +40,12 @@ class HTTPRequestHandler():
             self.write_response_headers()
 
         # Send the response to the client
-        self.res_stream.flush()
-
-    # Stream parser
+        self.res_stream.flush() # Stream parser
 
     def parse_stream(self):
         # Parse request line
         request_line = self.req_stream.readline().decode().strip(' \r\n')
+        print(request_line)
         self.method = request_line.split(' ')[0]
         self.path = request_line.split(' ')[1]
         print(request_line, self.method, self.path)
