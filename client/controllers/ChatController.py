@@ -142,6 +142,3 @@ class ChatController():
 
         # load the json into an object and pull the chat list
         return json.loads(body)['chat_list']
-
-
-
