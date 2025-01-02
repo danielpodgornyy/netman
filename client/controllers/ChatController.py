@@ -1,12 +1,16 @@
 import re
 import json
+from multiprocessing import Process
 
 from services.ChatClient import ChatClient
 from utils.Status import Status
 
+from services.utils.HTTPRequestSender import HTTPRequestSender
+
 class ChatController():
-    def __init__(self):
-        self.client = ChatClient()
+    def __init__(self, view):
+        self.client = ChatClient(self, HTTPRequestSender)
+        self.view = view
         self.username = ''
         self.active_chat_room = ''
 
@@ -29,6 +33,9 @@ class ChatController():
             self.client.connect_to_server()
             # Used to make sure the server recieves some input on connection
             self._send_test_message()
+
+            # Init listening for connections on a seperate thread
+            self.client.start_listening()
 
         except Exception as e:
             print(f"Error attempting connection: {e}")
@@ -57,7 +64,7 @@ class ChatController():
                 'body': json_data
                 }
 
-        # Send a request to delete username
+            # Send a request to delete username
         try:
             self.client.connect_to_server()
             self.client.send_http_request(http_request_data)
@@ -68,6 +75,9 @@ class ChatController():
         # Reset username
         self.username = ''
         # Close connection
+
+
+        self.client.stop_listening()
         self.client.close_connection()
 
 
@@ -241,4 +251,9 @@ class ChatController():
         print(response_code, ':P')
 
         return response_code
+
+    def add_text_to_view(self, log_json):
+        log_obj = json.loads(log_json)
+
+        self.view.add_text(f'{log_obj["username"]}: {log_obj["message"]}')
 

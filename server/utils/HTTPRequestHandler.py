@@ -1,7 +1,7 @@
 import json
 
 class HTTPRequestHandler():
-    def __init__(self, req_stream, res_stream, controller):
+    def __init__(self, req_stream, res_stream, controller, address):
         self.req_stream = req_stream
         self.res_stream = res_stream
         self.method = ''
@@ -24,6 +24,7 @@ class HTTPRequestHandler():
                 }
 
         self.controller = controller
+        self.address = address
 
         self.handler()
 
@@ -112,7 +113,7 @@ class HTTPRequestHandler():
                 username = json.loads(self.body)['username']
 
                 # Try to input username
-                if self.controller.input_username(username):
+                if self.controller.input_username(username, self.address):
                     # OK
                     self.write_response_line(200)
                 else:

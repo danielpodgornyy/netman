@@ -19,12 +19,12 @@ class ChatModel():
     def get_curr_users(self):
         return self.curr_users
 
-    def input_username(self, username):
-        self.curr_users.append(username)
+    def input_user(self, user):
+        self.curr_users.append(user)
         print(self.curr_users)
 
     def delete_username(self, username):
-        self.curr_users.remove(username)
+        self.curr_users = [user for user in self.curr_users if user['username'] != username]
         print(self.curr_users)
 
     def get_curr_chats(self):
@@ -40,12 +40,9 @@ class ChatModel():
     def get_chat_logs(self, chat_room_name):
         return self.curr_chats[chat_room_name]
 
-    def enter_log(self, chat_room, username, message):
+    def enter_log(self, chat_room, chat_log_object):
         # Append value
-        self.curr_chats[chat_room].append({
-                'username': username,
-                'message': message
-                })
+        self.curr_chats[chat_room].append(chat_log_object)
         print(self.curr_chats, 'is printed')
 
 

@@ -118,13 +118,13 @@ class ChatView(ttk.Frame):
         chat_profile.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
         name.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
 
-    def add_text(self, textbox, text):
-        textbox.config(state=tk.NORMAL)
-        textbox.insert(tk.END, '>: ' + text + '\n')
-        textbox.config(state=tk.DISABLED)
+    def add_text(self, text):
+        self.chat_response.config(state=tk.NORMAL)
+        self.chat_response.insert(tk.END, '>: ' + text + '\n')
+        self.chat_response.config(state=tk.DISABLED)
 
         # Scroll to bottom on each add
-        textbox.yview_moveto(1)
+        self.chat_response.yview_moveto(1)
 
     def clear_text(self, textbox):
         textbox.config(state=tk.NORMAL)
@@ -158,7 +158,7 @@ class ChatView(ttk.Frame):
                 highlightcolor='white'
                 )
         self.chat_response.grid(column=0, row=0, columnspan=2, sticky='nsew')
-        self.add_text(self.chat_response, '--- CONNECT TO A SERVER ---')
+        self.add_text('--- CONNECT TO A SERVER ---')
 
         chat_entry = ttk.Entry(
                 right_container,
@@ -277,7 +277,7 @@ class ChatView(ttk.Frame):
 
         # Update textbox
         self.clear_text(self.chat_response)
-        self.add_text(self.chat_response, '--- SELECT A CHATROOM ---')
+        self.add_text('--- SELECT A CHATROOM ---')
 
     def prompt_add_chat(self):
         # Keep resultant string
@@ -328,7 +328,7 @@ class ChatView(ttk.Frame):
         self.clear_text(self.chat_response)
 
         for log in chat_logs:
-            self.add_text(self.chat_response, f'{log["username"]}: {log["message"]}')
+            self.add_text(f'{log["username"]}: {log["message"]}')
 
     def enter_log(self):
         # Get username
@@ -341,7 +341,7 @@ class ChatView(ttk.Frame):
         response_code = int(self.controller.enter_log(username, message))
 
         if (response_code == 200):
-            self.add_text(self.chat_response, f'{username}: {message}')
+            self.add_text(f'{username}: {message}')
         else:
-            self.add_text(self.chat_response, 'server: Message not sent, connection error')
+            self.add_text('server: Message not sent, connection error')
 

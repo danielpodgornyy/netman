@@ -1,24 +1,31 @@
+import json
+
 from models.ChatModel import ChatModel
 
 class ChatController():
-    def __init__(self):
+    def __init__(self, server):
         self.model = ChatModel()
 
-    def input_username(self, username):
+        self.server = server
+
+    def input_username(self, username, address):
         # Check if the username already exists
         curr_users = self.model.get_curr_users()
-        if username in curr_users:
+        usernames = list(user['username'] for user in curr_users)
+        if username in usernames:
             return False
 
         # Input username
-        self.model.input_username(username)
+        user = { 'username': username, 'address': address }
+        self.model.input_user(user)
         return True
 
     def delete_username(self, username):
         curr_users = self.model.get_curr_users()
-        if username in curr_users:
-            self.model.delete_username(username)
+        usernames = list(user['username'] for user in curr_users)
 
+        if username in usernames:
+            self.model.delete_username(username)
 
     def get_curr_chats(self):
         chat_list = self.model.get_curr_chats()
@@ -52,8 +59,23 @@ class ChatController():
         username = chat_log['username']
         message = chat_log['message']
 
-        self.model.enter_log(chat_room, username, message)
+        chat_log_object = {
+                'username': username,
+                'message': message
+                }
+
+        self.model.enter_log(chat_room, chat_log_object)
+
+        # Broadcast the adding of the log to clients
+        self.broadcast_data(json.dumps(chat_log_object), username)
 
         return True
 
+    # Don't broadcast to the user who sent the message
+    def broadcast_data(self, json_data, sender_username):
+        curr_users = self.model.get_curr_users()
+        addresses = list(user['address'] for user in curr_users if user['username'] != sender_username)
 
+        # Broadcasting
+        for address in addresses:
+            self.server.send_json(address, json_data)

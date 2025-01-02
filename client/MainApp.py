@@ -22,7 +22,7 @@ class MainApp(tk.Tk):
 
         # Connect controllers
         # CHAT
-        chat_controller = ChatController()
+        chat_controller = ChatController(self.frames['chat'])
         self.frames['chat'].set_controller(chat_controller)
 
         # Initialize frames
