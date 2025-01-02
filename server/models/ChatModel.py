@@ -1,12 +1,20 @@
-from collections import deque
-
 class ChatModel():
     def __init__(self):
         self.curr_users = []
-        # Test
+        # Each chat is stored as a dict of queues
         self.curr_chats = {
-                'Chat1': '',
-                'Chat2': ''}
+                'Chat1': [
+                    {
+                        'username':'Bob',
+                        'message': 'Something'
+                     },
+                    {
+                        'username':'Phil',
+                        'message': 'mmmmmmemememem'
+                     },
+                    ],
+                'Chat2': []
+                }
 
     def get_curr_users(self):
         return self.curr_users
@@ -28,4 +36,7 @@ class ChatModel():
         self.curr_chats[chat_room_name] = chat_room_data
 
         print(self.curr_chats.keys())
+
+    def get_chat_logs(self, chat_room_name):
+        return self.curr_chats[chat_room_name]
 

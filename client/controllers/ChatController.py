@@ -8,6 +8,7 @@ class ChatController():
     def __init__(self):
         self.client = ChatClient()
         self.username = ''
+        self.active_chat_room = ''
 
     def init_connect_to_server(self, ip_address):
         # If you were previously connected to a server, remove your username from it
@@ -36,7 +37,6 @@ class ChatController():
         return Status.SUCCESS
 
     def leave_server(self):
-        print(self.username)
         # If there is no username set, there is nothing to be done
         if (self.username == ''):
             return
@@ -108,8 +108,6 @@ class ChatController():
                 'body': json_data
                 }
 
-
-
         response_code = ''
         try:
             self.client.connect_to_server()
@@ -128,9 +126,8 @@ class ChatController():
                     'Content-Length': 0,
                     'Connection': 'close'
                     },
-                'body': 'd'
+                'body': ''
                 }
-
 
         response_code = ''
         body = ''
@@ -179,3 +176,30 @@ class ChatController():
             return True
         else:
             return False
+
+    def get_chat_room_logs(self, chat_room_name):
+        self.active_chat_room = chat_room_name
+        print(chat_room_name)
+
+        # Pull chats from chat room
+        http_request_data = {
+                'method': 'GET',
+                'path': f'/logs:{chat_room_name}',
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Content-Length': 0,
+                    'Connection': 'close'
+                    },
+                'body': ''
+                }
+
+        response_code = ''
+        body = ''
+        try:
+            self.client.connect_to_server()
+            response_code, body = self.client.send_http_request(http_request_data)
+        except Exception as e:
+            print("Error getting chat room logs: ", e)
+
+        # Load the json into an object
+        return json.loads(body)['chat_logs']

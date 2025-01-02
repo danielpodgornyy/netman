@@ -38,5 +38,13 @@ class ChatController():
         self.model.add_chat(chat_room_name)
         return True
 
+    def get_chat_logs(self, chat_room_name):
+        print(chat_room_name)
+        chat_logs = self.model.get_chat_logs(chat_room_name)
+        chat_logs_object = {
+                'chat_logs': chat_logs # list of dicts
+                }
+
+        return chat_logs_object
 
 

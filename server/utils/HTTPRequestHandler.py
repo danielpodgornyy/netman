@@ -6,6 +6,7 @@ class HTTPRequestHandler():
         self.res_stream = res_stream
         self.method = ''
         self.path = ''
+        self.parameter = ''
         self.headers =  {
                 'Content-Type': 'application/json',
                 'Content-Length': '0',
@@ -47,7 +48,16 @@ class HTTPRequestHandler():
         # Parse request line
         request_line = self.req_stream.readline().decode().strip(' \r\n')
         self.method = request_line.split(' ')[0]
-        self.path = request_line.split(' ')[1]
+
+        # If the path line contains a parameter, include it
+        path_line = request_line.split(' ')[1]
+        colon_pos = path_line.find(':')
+
+        if (colon_pos != -1):
+            self.path = path_line[:colon_pos]
+            self.parameter = path_line[colon_pos+1:]
+        else:
+            self.path = path_line
 
         # Parse headers
         line = self.req_stream.readline().decode().strip(' \r\n')
@@ -73,6 +83,20 @@ class HTTPRequestHandler():
                     self.write_response_line(200)
                     self.write_response_headers()
                     self.write_response_body(chat_list_json)
+                else:
+                    self.write_response_line(404)
+                    self.write_response_headers()
+
+            case '/logs':
+                # Get the chatroom logs from the room name stored in a parameter
+                chat_logs = self.controller.get_chat_logs(self.parameter)
+
+                if chat_logs:
+                    chat_logs_json = json.dumps(chat_logs)
+
+                    self.write_response_line(200)
+                    self.write_response_headers()
+                    self.write_response_body(chat_logs_json)
                 else:
                     self.write_response_line(404)
                     self.write_response_headers()
