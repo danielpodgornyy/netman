@@ -61,7 +61,7 @@ class ChatController():
         try:
             self.client.connect_to_server()
             self.client.send_http_request(http_request_data)
-        except:
+        except Exception as e:
             print(f"Error deleting username: ", e)
 
 
@@ -114,6 +114,7 @@ class ChatController():
             response_code, body = self.client.send_http_request(http_request_data)
         except Exception as e:
             print("Error sending username: ", e)
+            response_code = 500
 
         return response_code
 
@@ -136,6 +137,7 @@ class ChatController():
             response_code, body = self.client.send_http_request(http_request_data)
         except Exception as e:
             print("Error getting chats: ", e)
+            response_code = 500
 
         # load the json into an object and pull the chat list
         return json.loads(body)['chat_list']
@@ -167,6 +169,7 @@ class ChatController():
             response_code, body = self.client.send_http_request(http_request_data)
         except Exception as e:
             print("Error adding chat room: ", e)
+            response_code = 500
         print(response_code)
 
         return response_code
@@ -200,6 +203,7 @@ class ChatController():
             response_code, body = self.client.send_http_request(http_request_data)
         except Exception as e:
             print("Error getting chat room logs: ", e)
+            return []
 
         # Load the json into an object
         return json.loads(body)['chat_logs']
@@ -233,6 +237,7 @@ class ChatController():
             response_code, body = self.client.send_http_request(http_request_data)
         except Exception as e:
             print("Error adding chat room: ", e)
+            response_code = 500
         print(response_code, ':P')
 
         return response_code
