@@ -31,7 +31,7 @@ class ChatModel():
         return list(self.curr_chats.keys())
 
     def add_chat(self, chat_room_name):
-        chat_room_data = ''
+        chat_room_data = []
 
         self.curr_chats[chat_room_name] = chat_room_data
 
@@ -39,4 +39,13 @@ class ChatModel():
 
     def get_chat_logs(self, chat_room_name):
         return self.curr_chats[chat_room_name]
+
+    def enter_log(self, chat_room, username, message):
+        # Append value
+        self.curr_chats[chat_room].append({
+                'username': username,
+                'message': message
+                })
+        print(self.curr_chats, 'is printed')
+
 

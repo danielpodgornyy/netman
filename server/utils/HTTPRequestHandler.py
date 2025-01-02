@@ -130,6 +130,18 @@ class HTTPRequestHandler():
                     # CONFLICT
                     self.write_response_line(409)
 
+            case '/logs':
+
+                # Pull the username from the json
+                chat_log = json.loads(self.body)['chat_log']
+
+                # Try to input username
+                if self.controller.enter_log(chat_log):
+                    # OK
+                    self.write_response_line(200)
+                else:
+                    self.write_response_line(500)
+
             case _:
                 # NOT FOUND
                 self.write_response_line(404)

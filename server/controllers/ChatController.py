@@ -47,4 +47,13 @@ class ChatController():
 
         return chat_logs_object
 
+    def enter_log(self, chat_log):
+        chat_room = chat_log['chat_room']
+        username = chat_log['username']
+        message = chat_log['message']
+
+        self.model.enter_log(chat_room, username, message)
+
+        return True
+
 

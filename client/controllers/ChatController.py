@@ -203,3 +203,37 @@ class ChatController():
 
         # Load the json into an object
         return json.loads(body)['chat_logs']
+
+    def get_username(self):
+        return self.username
+
+    def enter_log(self, username, message):
+        # Checks
+        if (not self.server_is_active() or self.active_chat_room == ''):
+            return 500
+
+        # Turn the object to a JSON string
+        json_data = json.dumps({ 'chat_log': {'chat_room':self.active_chat_room, 'username': username, 'message': message}})
+        json_data_size = len(json_data.encode())
+
+        http_request_data = {
+                'method': 'POST',
+                'path': f'/logs:{self.active_chat_room}', # Put the current chat room as the param
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Content-Length': json_data_size,
+                    'Connection': 'close'
+                    },
+                'body': json_data
+                }
+
+        response_code = ''
+        try:
+            self.client.connect_to_server()
+            response_code, body = self.client.send_http_request(http_request_data)
+        except Exception as e:
+            print("Error adding chat room: ", e)
+        print(response_code, ':P')
+
+        return response_code
+
