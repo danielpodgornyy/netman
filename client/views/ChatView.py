@@ -94,19 +94,23 @@ class ChatView(ttk.Frame):
             # Add chat option
             chat.add_command(label="Connect to Server", command=lambda: self.prompt_connect_to_server())
 
-    def create_chat(self, parent, chat_num, name):
+    def create_chat(self, parent, chat_num, chat_name):
         parent.rowconfigure(chat_num, weight=1)
         chat_profile = tk.Frame(parent.interior, background='white')
         chat_profile.grid(column=0, row=chat_num, padx=1, pady=1, sticky='new')
 
         name = ttk.Label(
                 chat_profile,
-                text=name,
+                text=chat_name,
                 padding = (0, 10),
                 style='Profile.TLabel',
                 anchor=tk.CENTER
                 )
         name.pack(fill=tk.X)
+
+        # Bind to the container and name
+        chat_profile.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
+        name.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
 
     def add_text(self, textbox, text):
         textbox.config(state=tk.NORMAL)
@@ -301,4 +305,18 @@ class ChatView(ttk.Frame):
                     title='Error',
                     message='An error has occured'
                     )
+
+    def populate_chat_data(self, chat_room_name):
+        # Get, chatroom logs
+        chat_logs = self.controller.get_chat_room_logs(chat_room_name)
+
+        self.clear_text(self.chat_response)
+
+        for log in chat_logs:
+            self.add_text(self.chat_response, f'{log["username"]}: {log["message"]}')
+
+
+
+
+
 
