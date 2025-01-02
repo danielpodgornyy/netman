@@ -111,6 +111,9 @@ class ChatView(ttk.Frame):
                 )
         name.pack(fill=tk.X)
 
+        # Scroll to bottom
+        parent.canvas.yview_moveto(1)
+
         # Bind to the container and name
         chat_profile.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
         name.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
@@ -119,6 +122,9 @@ class ChatView(ttk.Frame):
         textbox.config(state=tk.NORMAL)
         textbox.insert(tk.END, '>: ' + text + '\n')
         textbox.config(state=tk.DISABLED)
+
+        # Scroll to bottom on each add
+        textbox.yview_moveto(1)
 
     def clear_text(self, textbox):
         textbox.config(state=tk.NORMAL)
