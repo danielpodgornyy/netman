@@ -15,6 +15,9 @@ class ChatView(ttk.Frame):
         # Keep a reference to the parent for switching frames
         self.parent = root
 
+        # Keeps track of the string within the entry box
+        self.entry_var = tk.StringVar()
+
         # Set styles
         self.create_styles()
         self.configure(style = 'Main.TFrame')
@@ -152,14 +155,16 @@ class ChatView(ttk.Frame):
         self.add_text(self.chat_response, '--- CONNECT TO A SERVER ---')
 
         chat_entry = ttk.Entry(
-                right_container
+                right_container,
+                textvariable=self.entry_var
                 )
         chat_entry.grid(column=0, row=1, sticky='nsew')
 
         chat_button = ttk.Button(
                 right_container,
                 text='Send',
-                style='Send.TButton'
+                style='Send.TButton',
+                command=self.enter_log
                 )
         chat_button.grid(column=1, row=1, sticky='nsew')
 
@@ -314,6 +319,21 @@ class ChatView(ttk.Frame):
 
         for log in chat_logs:
             self.add_text(self.chat_response, f'{log["username"]}: {log["message"]}')
+
+    def enter_log(self):
+        # Get username
+        username = self.controller.get_username()
+
+        # Save and clear var
+        message = self.entry_var.get()
+        self.entry_var.set('')
+
+        response_code = int(self.controller.enter_log(username, message))
+
+        if (response_code == 200):
+            self.add_text(self.chat_response, f'{username}: {message}')
+        else:
+            self.add_text(self.chat_response, 'server: Message not sent, connection error')
 
 
 
