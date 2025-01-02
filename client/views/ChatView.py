@@ -168,6 +168,10 @@ class ChatView(ttk.Frame):
                 )
         chat_button.grid(column=1, row=1, sticky='nsew')
 
+        # Allow entry by just pressing enter
+        chat_entry.bind('<Return>', lambda e: self.enter_log())
+
+
     def generate_widgets(self):
         # Create menu bar
         menubar = ttk.Frame(
@@ -334,9 +338,4 @@ class ChatView(ttk.Frame):
             self.add_text(self.chat_response, f'{username}: {message}')
         else:
             self.add_text(self.chat_response, 'server: Message not sent, connection error')
-
-
-
-
-
 
