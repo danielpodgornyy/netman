@@ -179,7 +179,10 @@ class HTTPRequestHandler():
     def write_response_line(self, status_code):
         response_line = f'HTTP/1.1 {status_code} {self.HTTPStatus[status_code]}\r\n'
         self.res_stream.write(response_line.encode())
-        print(response_line)
+
+        # For logging purposes
+        print('HTTP RESPONSE:')
+        print(response_line.strip('\r\n'))
 
     def write_response_headers(self, *args, **kwargs):
         # Make a copy of the headers and update the appropriate values
@@ -190,11 +193,16 @@ class HTTPRequestHandler():
         response_line = '\r\n'.join(f'{key}: {value}' for key, value in headers_copy.items())
         self.res_stream.write(response_line.encode())
 
-        print(response_line)
         # Empty line to define end of headers
         self.res_stream.write(b'\r\n\r\n')
+
+        # For logging purposes
+        print(response_line + '\n')
 
 
     # Made for uniformity
     def write_response_body(self, body):
         self.res_stream.write(body.encode())
+
+        print(body + '\n')
+
