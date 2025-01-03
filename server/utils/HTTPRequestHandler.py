@@ -122,9 +122,10 @@ class HTTPRequestHandler():
             case '/chat':
                 # Pull the username from the json
                 chat_room_name = json.loads(self.body)['chat_room_name']
+                username = json.loads(self.body)['username']
 
                 # Try to input username
-                if self.controller.add_chat(chat_room_name):
+                if self.controller.add_chat(chat_room_name, username):
                     # OK
                     self.write_response_line(200)
                 else:

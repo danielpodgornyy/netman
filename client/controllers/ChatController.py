@@ -159,7 +159,7 @@ class ChatController():
             return 406
 
         # Turn the object to a JSON string
-        json_data = json.dumps({ 'chat_room_name': chat_room_name})
+        json_data = json.dumps({ 'chat_room_name': chat_room_name, 'username': self.username})
         json_data_size = len(json_data.encode())
 
         http_request_data = {
@@ -252,8 +252,13 @@ class ChatController():
 
         return response_code
 
-    def add_text_to_view(self, log_json):
-        log_obj = json.loads(log_json)
+    def process_incoming_data(self, data_json):
+        json_obj = json.loads(data_json)
 
-        self.view.add_text(f'{log_obj["username"]}: {log_obj["message"]}')
+        print(json_obj)
 
+        # If the message is populated, then its a log.
+        if json_obj['message']:
+            self.view.add_text(f'{json_obj["username"]}: {json_obj["message"]}')
+        elif json_obj['chat_room_name']:
+            self.view.create_chat(json_obj['chat_room_name'])

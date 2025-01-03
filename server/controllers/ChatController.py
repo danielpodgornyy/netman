@@ -33,9 +33,10 @@ class ChatController():
         chat_list_object = {
                 'chat_list': chat_list
                 }
+
         return chat_list_object
 
-    def add_chat(self, chat_room_name):
+    def add_chat(self, chat_room_name, username):
         # Check if the chat room exists
         curr_chats = self.model.get_curr_chats()
         if chat_room_name in curr_chats:
@@ -43,6 +44,10 @@ class ChatController():
 
         # Input username
         self.model.add_chat(chat_room_name)
+
+        chat_list_obj = {'chat_room_name': chat_room_name}
+
+        self.broadcast_data(json.dumps(chat_list_obj), username)
         return True
 
     def get_chat_logs(self, chat_room_name):
@@ -75,6 +80,8 @@ class ChatController():
     def broadcast_data(self, json_data, sender_username):
         curr_users = self.model.get_curr_users()
         addresses = list(user['address'] for user in curr_users if user['username'] != sender_username)
+
+        print(addresses)
 
         # Broadcasting
         for address in addresses:

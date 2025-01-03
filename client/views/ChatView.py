@@ -18,6 +18,9 @@ class ChatView(ttk.Frame):
         # Keeps track of the string within the entry box
         self.entry_var = tk.StringVar()
 
+        # # of chats are on screen
+        self.chat_index = 0
+
         # Set styles
         self.create_styles()
         self.configure(style = 'Main.TFrame')
@@ -97,10 +100,13 @@ class ChatView(ttk.Frame):
             # Add chat option
             chat.add_command(label="Connect to Server", command=lambda: self.prompt_connect_to_server())
 
-    def create_chat(self, parent, chat_num, chat_name):
-        parent.rowconfigure(chat_num, weight=1)
-        chat_profile = tk.Frame(parent.interior, background='white')
-        chat_profile.grid(column=0, row=chat_num, padx=1, pady=1, sticky='new')
+    def create_chat(self, chat_name):
+        self.chat_container.rowconfigure(self.chat_index, weight=1)
+
+        chat_profile = tk.Frame(self.chat_container.interior, background='white')
+        chat_profile.grid(column=0, row=self.chat_index, padx=1, pady=1, sticky='new')
+
+        self.chat_index += 1
 
         name = ttk.Label(
                 chat_profile,
@@ -112,7 +118,7 @@ class ChatView(ttk.Frame):
         name.pack(fill=tk.X)
 
         # Scroll to bottom
-        parent.canvas.yview_moveto(1)
+        self.chat_container.canvas.yview_moveto(1)
 
         # Bind to the container and name
         chat_profile.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
@@ -271,9 +277,8 @@ class ChatView(ttk.Frame):
     def populate_window(self):
         # Update the current chat_list
         chat_list = self.controller.get_chats()
-        for index, chat_name in enumerate(chat_list):
-            self.create_chat(self.chat_container, index, chat_name)
-            self.chat_index = index
+        for chat_name in chat_list:
+            self.create_chat(chat_name)
 
         # Update textbox
         self.clear_text(self.chat_response)
@@ -303,8 +308,7 @@ class ChatView(ttk.Frame):
 
         # SUCCESS
         if response_code == 200:
-            self.chat_index += 1
-            self.create_chat(self.chat_container, self.chat_index, chat_room_name)
+            self.create_chat(chat_room_name)
         elif response_code == 409:
             showerror(
                     title='Conflict Error',

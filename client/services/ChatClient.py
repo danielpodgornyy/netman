@@ -81,8 +81,8 @@ class ChatClient():
 
     def handle_request(self, server):
         with server:
-            log_json = server.recv(1024)
-            self.controller.add_text_to_view(log_json)
+            data_json = server.recv(1024)
+            self.controller.process_incoming_data(data_json.decode())
 
     def start_listening(self):
         if self.listen_thread and self.listen_thread.is_alive():
