@@ -18,8 +18,10 @@ class ChatView(ttk.Frame):
         # Keeps track of the string within the entry box
         self.entry_var = tk.StringVar()
 
-        # # of chats are on screen
+        # # of chats are on screen self.chat_index = 0
         self.chat_index = 0
+        # Keeps track of the active chat label
+        self.active_chat = None
 
         # Set styles
         self.create_styles()
@@ -50,6 +52,7 @@ class ChatView(ttk.Frame):
         self.style.configure('DarkGrey.TFrame', background='#2B2E32')
         self.style.configure('TMenubutton', font=('MathJax_SansSerif', 10), padding=0)
         self.style.configure('Profile.TLabel', font=('MathJax_SansSerif', 20), padding=0, background='#3E4248', foreground='white')
+        self.style.configure('Active.TLabel', font=('MathJax_SansSerif', 20), padding=0, background='#2b2d41', foreground='white')
         self.style.configure('Send.TButton', font=('MathJax_SansSerif', 10), padding=0)
 
         self.style.configure('Prompt.TLabel', font=('MathJax_SansSerif', 10), padding=0 )
@@ -121,8 +124,8 @@ class ChatView(ttk.Frame):
         self.chat_container.canvas.yview_moveto(1)
 
         # Bind to the container and name
-        chat_profile.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
-        name.bind('<Button-1>', lambda e: self.populate_chat_data(chat_name))
+        chat_profile.bind('<Button-1>', lambda e: self.populate_chat_data(e, chat_name))
+        name.bind('<Button-1>', lambda e: self.populate_chat_data(e, chat_name))
 
     def add_text(self, text):
         self.chat_response.config(state=tk.NORMAL)
@@ -325,9 +328,17 @@ class ChatView(ttk.Frame):
                     message='An error has occured'
                     )
 
-    def populate_chat_data(self, chat_room_name):
-        # Get, chatroom logs
+    def populate_chat_data(self, event, chat_room_name):
+        # Get, chatroom logs and make the chat active
         chat_logs = self.controller.get_chat_room_logs(chat_room_name)
+
+        # Reset previously active chat
+        if (self.active_chat is not None):
+            self.active_chat.config(style='Profile.TLabel')
+
+        # Show the clicked chat room as active
+        event.widget.config(style='Active.TLabel')
+        self.active_chat = event.widget
 
         self.clear_text(self.chat_response)
 
