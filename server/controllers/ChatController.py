@@ -71,8 +71,9 @@ class ChatController():
 
         self.model.enter_log(chat_room, chat_log_object)
 
-        # Broadcast the adding of the log to clients
-        self.broadcast_data(json.dumps(chat_log_object), username)
+        # Broadcast the adding of the log to clients (include chat room name)
+        print(chat_log, 'le chat log main')
+        self.broadcast_data(json.dumps(chat_log), username)
 
         return True
 

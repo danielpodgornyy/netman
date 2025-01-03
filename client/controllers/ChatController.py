@@ -254,11 +254,13 @@ class ChatController():
 
     def process_incoming_data(self, data_json):
         json_obj = json.loads(data_json)
-
+        keys = json_obj.keys()
         print(json_obj)
 
-        # If the message is populated, then its a log.
-        if json_obj['message']:
-            self.view.add_text(f'{json_obj["username"]}: {json_obj["message"]}')
-        elif json_obj['chat_room_name']:
+        # If the message is one of the keys and the active chat room is the one that was updated
+        if 'message' in keys:
+            if json_obj["chat_room"] == self.active_chat_room:
+                self.view.add_text(f'{json_obj["username"]}: {json_obj["message"]}')
+        # If chat_room_name is one of the keys, its a chat room
+        elif 'chat_room_name' in keys:
             self.view.create_chat(json_obj['chat_room_name'])
