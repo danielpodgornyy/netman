@@ -93,5 +93,6 @@ The server and client implementation is custom made with no external module used
 Since data on each clients screen needs to be updated live, each client has a seperate thread to listen for connections from the server. Whenever a chat message or chat room is added on the server, this notification is broadcast to every client but the client who sent the request. This data is sent as pure JSON since all the client has to update the GUI's on the client side.
 
 ## Bugs
+
 - If you run two clients on one machine, one of the clients will take both updated values from the server instead of it being updated on both screens
 
